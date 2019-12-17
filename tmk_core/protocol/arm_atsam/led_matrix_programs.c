@@ -104,18 +104,47 @@ led_setup_t leds_rainbow_s[] = {
 //The last entry must be { .end = 1 }
 //Add the new animation name to the list below following its format
 
+// Magenta
+led_setup_t leds_magenta[] = {
+    {.hs = 0, .he = 100, .rs = 255, .re = 255, .gs = 0, .ge = 0, .bs = 255, .be = 255, .ef = EF_NONE},
+    {.end = 1},
+};
+
+// Teal
+led_setup_t leds_teal[] = {
+    {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 127, .ge = 127, .bs = 255, .be = 255, .ef = EF_NONE},
+    {.end = 1},
+};
+
+// Cyan
+led_setup_t leds_cyan[] = {
+    {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 255, .ge = 255, .bs = 255, .be = 255, .ef = EF_NONE},
+    {.end = 1},
+};
+
+// Mint
+led_setup_t leds_mint[] = {
+    {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 255, .ge = 255, .bs = 127, .be = 127, .ef = EF_NONE},
+    {.end = 1},
+};
+
+// Blue/Green scrolling
+led_setup_t leds_bluegreen_s[] = {
+    {.hs = 0000, .he = 25.0, .rs = 000, .re = 000, .gs = 000, .ge = 255, .bs = 255, .be = 255, .ef = EF_OVER | EF_SCR_R}, // Blue
+    {.hs = 25.0, .he = 50.0, .rs = 000, .re = 000, .gs = 255, .ge = 255, .bs = 255, .be = 000, .ef = EF_OVER | EF_SCR_R}, // Cyan
+    {.hs = 50.0, .he = 75.0, .rs = 000, .re = 000, .gs = 255, .ge = 255, .bs = 000, .be = 255, .ef = EF_OVER | EF_SCR_R}, // Green
+    {.hs = 75.0, .he = 100., .rs = 000, .re = 000, .gs = 255, .ge = 000, .bs = 255, .be = 255, .ef = EF_OVER | EF_SCR_R}, // Cyan
+    {.end = 1},
+};
+
 void *led_setups[] = {
-    leds_rainbow_s,
-    leds_rainbow_ns,
-    leds_teal_salmon,
-    leds_yellow,
-    leds_red,
-    leds_green,
-    leds_blue,
+    leds_cyan,
+    leds_mint,
+    leds_teal,
+    leds_magenta,
     leds_white,
-    leds_white_with_red_stripe,
-    leds_black_with_red_stripe,
-    leds_off
+    leds_rainbow_s,
+    leds_bluegreen_s,
 };
 
 const uint8_t led_setups_count = sizeof(led_setups) / sizeof(led_setups[0]);
