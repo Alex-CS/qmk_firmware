@@ -104,26 +104,26 @@ led_setup_t leds_rainbow_s[] = {
 //The last entry must be { .end = 1 }
 //Add the new animation name to the list below following its format
 
-// Magenta
+// Magenta (Red/Blue midpoint)
 led_setup_t leds_magenta[] = {
     {.hs = 0, .he = 100, .rs = 255, .re = 255, .gs = 0, .ge = 0, .bs = 255, .be = 255, .ef = EF_NONE},
     {.end = 1},
 };
 
-// Teal
+// Teal (Cyan/Blue midpoint)
 led_setup_t leds_teal[] = {
     {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 127, .ge = 127, .bs = 255, .be = 255, .ef = EF_NONE},
     {.end = 1},
 };
 
-// Cyan
+// Cyan (Green/Blue midpoint)
 led_setup_t leds_cyan[] = {
     {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 255, .ge = 255, .bs = 255, .be = 255, .ef = EF_NONE},
     {.end = 1},
 };
 
-// Mint
-led_setup_t leds_mint[] = {
+// Aqua (Green/Cyan midpoint)
+led_setup_t leds_aqua[] = {
     {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 255, .ge = 255, .bs = 127, .be = 127, .ef = EF_NONE},
     {.end = 1},
 };
@@ -137,14 +137,23 @@ led_setup_t leds_bluegreen_s[] = {
     {.end = 1},
 };
 
+// Green <-> Blue
+led_setup_t leds_green_blue[] = {
+    {.hs = 0, .he = 100, .rs = 0, .re = 0, .gs = 255, .ge = 000, .bs = 000, .be = 255, .ef = EF_NONE},
+    {.end = 1},
+};
+
+// TODO: Make function for midpoint between colors
+// TODO: Make function for patterns going between a variable number of colors
 void *led_setups[] = {
+    leds_bluegreen_s,
     leds_cyan,
-    leds_mint,
+    leds_aqua,
     leds_teal,
     leds_magenta,
     leds_white,
+    leds_green_blue,
     leds_rainbow_s,
-    leds_bluegreen_s,
 };
 
 const uint8_t led_setups_count = sizeof(led_setups) / sizeof(led_setups[0]);
