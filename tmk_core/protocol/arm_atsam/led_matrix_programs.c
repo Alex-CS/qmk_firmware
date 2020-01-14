@@ -59,7 +59,7 @@ led_setup_t leds_blue[] = {
 
 //White
 led_setup_t leds_white[] = {
-    { .hs = 0, .he = 100, .rs = 255, .re = 255, .gs = 255, .ge = 255, .bs = 255, .be = 255, .ef = EF_NONE },
+    { .hs = 0, .he = 100, .rs = 200, .re = 200, .gs = 255, .ge = 255, .bs = 255, .be = 255, .ef = EF_NONE },
     { .end = 1 },
 };
 
@@ -146,14 +146,14 @@ led_setup_t leds_green_blue[] = {
 // TODO: Make function for midpoint between colors
 // TODO: Make function for patterns going between a variable number of colors
 void *led_setups[] = {
-    leds_bluegreen_s,
-    leds_cyan,
-    leds_aqua,
     leds_teal,
     leds_magenta,
     leds_white,
     leds_green_blue,
     leds_rainbow_s,
+    leds_bluegreen_s,
+    leds_cyan,
+    leds_aqua,
 };
 
 const uint8_t led_setups_count = sizeof(led_setups) / sizeof(led_setups[0]);
