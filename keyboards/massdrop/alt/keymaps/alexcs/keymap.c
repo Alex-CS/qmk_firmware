@@ -25,13 +25,22 @@ enum alt_keycodes {
     MD_BOOT             //Restart into bootloader after hold timeout
 };
 
+enum tapdance_keycodes {
+    TD_ESCP = 0, // Single tap for Esc, double for CAPS
+};
+
+//Associate our tap dance key with its functionality
+qk_tap_dance_action_t tap_dance_actions[] = {
+        [TD_ESCP] = ACTION_TAP_DANCE_DOUBLE(KC_ESC, KC_CAPS),
+};
+
 keymap_config_t keymap_config;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
-        KC_ESC,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_DEL,  \
+        KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_DEL,  \
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_HOME, \
-        KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_PGUP, \
+    TD(TD_ESCP), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,  KC_PGUP, \
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,          KC_UP,   KC_PGDN, \
         KC_LCTL, KC_LGUI, KC_LALT,                            KC_SPC,                             KC_RALT, MO(1),   KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
@@ -40,7 +49,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, _______, _______, _______, U_T_AGCR,_______, KC_PSCR, KC_SLCK, KC_PAUS, _______, KC_END,  \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, _______, _______, _______, _______, _______, _______, _______,          _______, KC_VOLU, \
         _______, L_T_MD,  L_T_ONF, _______, L_EDG_M, MD_BOOT, NK_TOGG, _______, _______, _______, _______, _______,          KC_PGUP, KC_VOLD, \
-        _______, _______, _______,                            DBG_FAC,                            _______, _______, KC_HOME, KC_PGDN, KC_END   \
+        _______, _______, _______,                            DBG_FAC,                            _______, _______,   L_PTP, KC_PGDN, L_PTN    \
     ),
     /*
     [X] = LAYOUT(
@@ -49,6 +58,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, \
         _______, _______, _______,                            _______,                            _______, _______, _______, _______, _______  \
+    ),
+    [RGB] = LAYOUT(
+        GRV:   0,  1,         2,         3,      4,      5,      6,      7,      8,         9,        0: 10,     MINS: 11,   EQL: 12,   BSPC: 13,  DEL: 14,
+        TAB:  15,  Q: 16,     W: 17,     E: 18,  R: 19,  T: 20,  Y: 21,  U: 22,  I: 23,     O: 24,    P: 25,     LBRC: 26,   RBRC: 27,  BSLC: 28,  HOME: 29,
+        CAPS: 30,  A: 31,     S: 32,     D: 33,  F: 34,  G: 35,  H: 36,  J: 37,  K: 38,     L: 39,    SCLN: 40,  QUOT: 41,              ENTR: 42,  PGUP: 43,
+        LSFT: 44,  Z: 45,     X: 46,     C: 47,  V: 48,  B: 49,  N: 50,  M: 51,  COMM: 52,  DOT: 53,  SLSH: 54,  RSFT: 55,              UP: 56,    PGDN: 57,
+        LCTL: 58,  LGUI: 59,  LALT: 60,                SPC: 61,                             RALT: 62,  Fn: 63,             LEFT:  64,   DOWN: 65,  RGHT: 66,
+    ),
+    [MATRIX] = LAYOUT(
+        0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13,  14,
+        15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,
+        30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42     ,  43,
+        44,  45,  46,  47,  48,  49,  50,  51,  52,  53,  54,  55     ,  56,  57,
+        58,  59,  60,            61,                 62,  63,        64,  65,  66
     ),
     */
 };
@@ -247,7 +270,7 @@ led_instruction_t led_instructions[] = {
     //Examples are below
     
     //All LEDs use the user's selected pattern (this is the factory default)
-     { .flags = LED_FLAG_USE_ROTATE_PATTERN },
+    { .flags = LED_FLAG_USE_ROTATE_PATTERN },
 
     //Specific LEDs use the user's selected pattern while all others are off
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN, .id0 = 0xFFFFFFFF, .id1 = 0xAAAAAAAA, .id2 = 0x55555555, .id3 = 0x11111111 },
@@ -266,6 +289,8 @@ led_instruction_t led_instructions[] = {
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0xFFFF8000, .id1 = 0xFFFFFFFF, .id2 = 0x00000007, .r = 255, .layer = 1 },
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id2 = 0xFFFFFFF8, .id3 = 0x000003FF, .g = 127, .layer = 1 },
 
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0x11702001, .id1 = 0xDCF887F8, .id2 = 0xFFFFFFFF, .g = 63, .layer = 1 },
+
     //All key LEDs use red while edge LEDs use the active pattern
     //All key LEDs use red     (id0  32 -   1: 1111 1111 1111 1111 1111 1111 1111 1111 = 0xFFFFFFFF)
     //All key LEDs use red     (id1  64 -  33: 1111 1111 1111 1111 1111 1111 1111 1111 = 0xFFFFFFFF)
@@ -276,5 +301,5 @@ led_instruction_t led_instructions[] = {
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN , .id2 = 0xFFFFFFF8, .id3 = 0x000003FF },
 
     //end must be set to 1 to indicate end of instruction set
-     { .end = 1 }
+    { .end = 1 }
 };

@@ -467,6 +467,18 @@ static void led_run_pattern(led_setup_t *f, float* ro, float* go, float* bo, flo
 
 #define RGB_MAX_DISTANCE 232.9635f
 
+//static bool should_mode_apply(int scan) {
+//    switch (led_lighting_mode) {
+//        case LED_MODE_KEYS_ONLY:
+//            return !LED_IS_EDGE(scan);
+//        case LED_MODE_NON_KEYS_ONLY:
+//            return LED_IS_EDGE(scan);
+//        case LED_MODE_INDICATORS_ONLY:
+//        default:
+//            return false;
+//    }
+//}
+
 static void led_matrix_massdrop_config_override(int i)
 {
     float ro = 0;

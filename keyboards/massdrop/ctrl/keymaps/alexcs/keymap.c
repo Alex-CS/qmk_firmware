@@ -1,5 +1,26 @@
 #include QMK_KEYBOARD_H
 
+//#define MILLISECONDS_IN_SECOND 1000
+
+//========================================================== CONFIGURABLE DEFAULTS ==========================================================
+//#define RGB_DEFAULT_TIME_OUT 60
+//#define RGB_FAST_MODE_TIME_OUT 3
+//#define RGB_TIME_OUT_MAX 600
+//#define RGB_TIME_OUT_MIN 10
+//#define RGB_TIME_OUT_STEP 10
+//
+//static uint16_t idle_timer;             // Idle LED timeout timer
+//static uint8_t idle_second_counter;     // Idle LED seconds counter, counts seconds not milliseconds
+//
+//bool rgb_enabled_flag;                  // Current LED state flag. If false then LED is off.
+//bool rgb_time_out_enable;               // Idle LED toggle enable. If false then LED will not turn off after idle timeout.
+//bool rgb_time_out_fast_mode_enabled;
+//bool rgb_time_out_user_value;           // This holds the toggle value set by user with ROUT_TG. It's necessary as RGB_TOG changes timeout enable.
+//uint16_t rgb_time_out_seconds;          // Idle LED timeout value, in seconds not milliseconds
+//uint16_t rgb_time_out_saved_seconds;
+//led_flags_t rgb_time_out_saved_flag;    // Store LED flag before timeout so it can be restored when LED is turned on again.
+
+
 enum ctrl_keycodes {
     L_BRI = SAFE_RANGE, //LED Brightness Increase
     L_BRD,              //LED Brightness Decrease
@@ -56,15 +77,56 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,                              _______,          \
         _______, _______, _______,                   _______,                            _______, _______, _______, _______,            _______, _______, _______  \
     ),
+    [RGB] = LAYOUT(
+        ESC: 0,   F1: 1,    F2: 2,    F3: 3,    F4: 4,    F5: 5,    F6: 6,    F7: 7,    F8: 8,    F9: 9,    F10: 10,  F11: 11,  F12: 12,            PSCR: 13, SLCK: 14, PAUS: 15,
+        GRV: 16,  1: 17,    2: 18,    3: 19,    4: 20,    5: 21,    6: 22,    7: 23,    8: 24,    9: 25,    0: 26,    MINS: 27, EQL: 28,  BSPC: 29, INS: 30,  HOME: 31, PGUP: 32,
+        TAB: 33,  Q: 34,    W: 35,    E: 36,    R: 37,    T: 38,    Y: 39,    U: 40,    I: 41,    O: 42,    P: 43,    LBRC: 44, RBRC: 45, BSLS: 46, DEL: 47,  END: 48,  PGDN: 49,
+        CAPS: 50, A: 51,    S: 52,    D: 53,    F: 54,    G: 55,    H: 56,    J: 57,    K: 58,    L: 59,    SCLN: 60, QUOT: 61, ENT: 62,
+        LSFT: 63, Z: 64,    X: 65,    C: 66,    V: 67,    B: 68,    N: 69,    M: 70,    COMM: 71, DOT: 72,  SLSH: 73, RSFT: 74,                               UP: 75,
+        LCTL: 76, LGUI: 77, LALT: 78,                   SPC: 79,                                  RALT: 80, Fn: 81,   APP: 82,  RCTL: 83,           LEFT: 84, DOWN: 85, RGHT: 86
+    ),
+    [MATRIX] = LAYOUT(
+        0,       1,       2,       3,       4,       5,       6,       7,       8,       9,       10,      11,      12,                 13,      14,      15,
+        16,      17,      18,      19,      20,      21,      22,      23,      24,      25,      26,      27,      28,      29,        30,      31,      32,
+        33,      34,      35,      36,      37,      38,      39,      40,      41,      42,      43,      44,      45,      46,        47,      48,      49,
+        50,      51,      52,      53,      54,      55,      56,      57,      58,      59,      60,      61,      62,
+        63,      64,      65,      66,      67,      68,      69,      70,      71,      72,      73,      74,                                   75,
+        76,      77,      78,                        79,                                 80,      81,      82,      83,                 84,      85,      86
+    ),
     */
 };
 
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
+    gcr_desired = LED_GCR_MAX / 4;
+    led_lighting_mode = LED_MODE_NON_KEYS_ONLY;
+//    led_edge_brightness = 0.25f;
+    led_animation_id = 0;
+//    idle_second_counter = 0;
+//    rgb_time_out_seconds = RGB_DEFAULT_TIME_OUT;
+//    rgb_time_out_enable = true;
+//    rgb_enabled_flag = true;
+//    rgb_time_out_user_value = true;
+//    rgb_time_out_fast_mode_enabled = false;
+//    rgb_time_out_saved_flag = rgb_matrix_get_flags();
 };
 
 // Runs constantly in the background, in a loop.
 void matrix_scan_user(void) {
+//    if(rgb_time_out_enable && rgb_enabled_flag) {
+//        if (timer_elapsed(idle_timer) > MILLISECONDS_IN_SECOND) {
+//            idle_second_counter++;
+//            idle_timer = timer_read();
+//        }
+//
+//        if (idle_second_counter >= rgb_time_out_seconds) {
+//            rgb_time_out_saved_flag = rgb_matrix_get_flags();
+//            rgb_matrix_set_flags(LED_FLAG_NONE);
+//            rgb_matrix_disable_noeeprom();
+//            rgb_enabled_flag = false;
+//            idle_second_counter = 0;
+//        }
+//    }
 };
 
 #define MODS_SHIFT (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
@@ -74,6 +136,19 @@ void matrix_scan_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint32_t key_timer;
     static uint8_t scroll_effect = 0;
+
+//    if (rgb_time_out_enable) {
+//        idle_timer = timer_read();
+//        // Reset the seconds counter. Without this, something like
+//        // press> leave x seconds> press,
+//        // would be x seconds on the effective counter not 0 as it should.
+//        idle_second_counter = 0;
+//        if (!rgb_enabled_flag) {
+//            rgb_matrix_enable_noeeprom();
+//            rgb_matrix_set_flags(rgb_time_out_saved_flag);
+//            rgb_enabled_flag = true;
+//        }
+//    }
 
     switch (keycode) {
         case L_BRI: //LED Brightness Increase
@@ -246,6 +321,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 led_instruction_t led_instructions[] = {
+    //These get evaluated by tmk_core/protocol/arm_atsam/led_matrix.c:led_matrix_massdrop_config_override
     //LEDs are normally inactive, no processing is performed on them
     //Flags are used in matching criteria for an LED to be active and indicate how to color it
     //Flags can be found in tmk_core/protocol/arm_atsam/led_matrix.h (prefixed with LED_FLAG_)
@@ -253,7 +329,10 @@ led_instruction_t led_instructions[] = {
     //Examples are below
 
     //All LEDs use the user's selected pattern (this is the factory default)
-     { .flags = LED_FLAG_USE_ROTATE_PATTERN },
+    { .flags = LED_FLAG_USE_ROTATE_PATTERN },
+
+    // Light the right-side modifiers and adjacent edge LEDs orange on the the FN layer
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id2 = 0x1E0F0000, .r = 255, .g = 31, .layer = 1 },
 
     //Specific LEDs use the user's selected pattern while all others are off
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN, .id0 = 0xFFFFFFFF, .id1 = 0xAAAAAAAA, .id2 = 0x55555555, .id3 = 0x11111111 },
@@ -266,13 +345,13 @@ led_instruction_t led_instructions[] = {
     //When layer 1 is active, key LEDs use red    (id0  32 -  17: 1111 1111 1111 1111 0000 0000 0000 0000 = 0xFFFF0000) (except top row 16 - 1)
     //When layer 1 is active, key LEDs use red    (id1  64 -  33: 1111 1111 1111 1111 1111 1111 1111 1111 = 0xFFFFFFFF)
     //When layer 1 is active, key LEDs use red    (id2  87 -  65: 0000 0000 0111 1111 1111 1111 1111 1111 = 0x007FFFFF)
-    //When layer 1 is active, edge LEDs use green (id2  95 -  88: 1111 1111 1000 0000 0000 0000 0000 0000 = 0xFF800000)
+    //When layer 1 is active, edge LEDs use green (id2  95 -  88: 0101 0101 0000 0000 0000 0000 0000 0000 = 0xFF800000)
     //When layer 1 is active, edge LEDs use green (id3 119 -  96: 0000 0000 1111 1111 1111 1111 1111 1111 = 0x00FFFFFF)
     // { .flags = LED_FLAG_USE_ROTATE_PATTERN },
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0xFFFF0000, .id1 = 0xFFFFFFFF, .id2 = 0x007FFFFF, .r = 255, .layer = 1 },
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id2 = 0xFF800000, .id3 = 0x00FFFFFF, .g = 127, .layer = 1 },
 
-    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0xFFFF0000, .id1 = 0xFFFFFFFF, .id2 = 0x007FFFFF, .g = 255, .layer = 1 },
+    // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0xFFFF0000, .id1 = 0xFFFFFFFF, .id2 = 0x007FFFFF, .g = 255, .layer = 1 },
 
     //All key LEDs use red while edge LEDs use the active pattern
     //All key LEDs use red     (id0  32 -   1: 1111 1111 1111 1111 1111 1111 1111 1111 = 0xFFFFFFFF)

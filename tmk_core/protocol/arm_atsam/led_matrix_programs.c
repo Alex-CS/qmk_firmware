@@ -154,6 +154,7 @@ void *led_setups[] = {
     leds_bluegreen_s,
     leds_cyan,
     leds_aqua,
+    leds_off,
 };
 
 const uint8_t led_setups_count = sizeof(led_setups) / sizeof(led_setups[0]);
