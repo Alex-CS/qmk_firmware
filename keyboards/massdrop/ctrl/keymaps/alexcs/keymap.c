@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,   KC_DEL,  KC_END,  KC_PGDN, \
         KC_CAPS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT,                                        \
         KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,                              KC_UP,            \
-        KC_LCTL, KC_LGUI, KC_LALT,                   KC_SPC,                             KC_RALT, KC_RCTL, MO(1),   KC_APP,             KC_LEFT, KC_DOWN, KC_RGHT  \
+        KC_LGUI, KC_LCTL, KC_LALT,                   KC_SPC,                             KC_RALT, KC_RCTL, KC_RGUI,  MO(1),             KC_LEFT, KC_DOWN, KC_RGHT  \
     ),
     [1] = LAYOUT(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,            KC_MUTE, _______, _______, \
@@ -327,12 +327,27 @@ led_instruction_t led_instructions[] = {
     //Flags can be found in tmk_core/protocol/arm_atsam/led_matrix.h (prefixed with LED_FLAG_)
     //LED IDs can be found in config_led.h in the keyboard's directory
     //Examples are below
+    /*
+    [RGB] = LAYOUT(
+        ESC: 0,   F1: 1,    F2: 2,    F3: 3,    F4: 4,    F5: 5,    F6: 6,    F7: 7,    F8: 8,    F9: 9,    F10: 10,  F11: 11,  F12: 12,            PSCR: 13, SLCK: 14, PAUS: 15,
+        GRV: 16,  1: 17,    2: 18,    3: 19,    4: 20,    5: 21,    6: 22,    7: 23,    8: 24,    9: 25,    0: 26,    MINS: 27, EQL: 28,  BSPC: 29, INS: 30,  HOME: 31, PGUP: 32,
+        TAB: 33,  Q: 34,    W: 35,    E: 36,    R: 37,    T: 38,    Y: 39,    U: 40,    I: 41,    O: 42,    P: 43,    LBRC: 44, RBRC: 45, BSLS: 46, DEL: 47,  END: 48,  PGDN: 49,
+        CAPS: 50, A: 51,    S: 52,    D: 53,    F: 54,    G: 55,    H: 56,    J: 57,    K: 58,    L: 59,    SCLN: 60, QUOT: 61, ENT: 62,
+        LSFT: 63, Z: 64,    X: 65,    C: 66,    V: 67,    B: 68,    N: 69,    M: 70,    COMM: 71, DOT: 72,  SLSH: 73, RSFT: 74,                               UP: 75,
+        LCTL: 76, LGUI: 77, LALT: 78,                   SPC: 79,                                  RALT: 80, Fn: 81,   APP: 82,  RCTL: 83,           LEFT: 84, DOWN: 85, RGHT: 86
+    ),  Edge LEDs 88-119, proceeding clockwise from bottom-right corner
+    Each `.idX` is an 8-digit hex bitmask, where each hex digit toggles 4 LEDs
+        .id0 controls 31(HOME) - 0(ESC) eg. 0x0000FFFF = (0000 0000 0000 0000 1111 1111 1111 1111), matches the top row of the keyboard (the first 16 LEDs)
+        .id1 controls 63(LSFT) - 32(PGUP) eg. 0x3FF83FFC = (0011 1111 1111 1000 0011 1111 1111 1100), matches `Q`-`RBRC` and `A`-`QUOT`
+        .id2 controls 95(5th bottom edge LED) - 64(Z) eg. 0x00F00BFF = (0000 0000 1111 0000 0000 1011 1111 1111), matches `Z`-`SLSH`, the arrow keys, and the bottom right corner
+        .id3 controls 127 - 96, all the remaining edge LEDs plus eight unused spots. eg. 0x00080088 = (0000 0000 0000 1000 0000 0000 1000 1000), matches the 3 corner LEDs in this group
+     */
 
     //All LEDs use the user's selected pattern (this is the factory default)
     { .flags = LED_FLAG_USE_ROTATE_PATTERN },
 
-    // Light the right-side modifiers and adjacent edge LEDs orange on the the FN layer
-    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id2 = 0x1E0F0000, .r = 255, .g = 31, .layer = 1 },
+    // On the the FN layer, light the 4 corner LEDs on both the board and edge orange
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .id0 = 0x00008001, .id2 = 0x00C01000, .id3 = 0x00080088, .r = 255, .g = 31, .layer = 1 },
 
     //Specific LEDs use the user's selected pattern while all others are off
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN, .id0 = 0xFFFFFFFF, .id1 = 0xAAAAAAAA, .id2 = 0x55555555, .id3 = 0x11111111 },
